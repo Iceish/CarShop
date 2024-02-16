@@ -1,0 +1,18 @@
+﻿<InputText Value="@Text" ValueChanged="@OnChildTextChanged" />
+
+@code {
+    // La propriété que l'on veut binder
+    [Parameter]
+    public string? Text { get; set; }
+
+    // L'event doit être nommé <PropertyName>Changed
+    [Parameter]
+    public virtual EventCallback TextChanged { get; set; }
+
+    // Update the value and raise an Event.
+    private async void OnChildTextChanged(string? newValue)
+    {
+        Text = newValue?.Trim();
+        await TextChanged.InvokeAsync(Text);
+    }
+}

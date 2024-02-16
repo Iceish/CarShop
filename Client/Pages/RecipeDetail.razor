@@ -1,0 +1,61 @@
+﻿@page "/recipes/detail/{RecipeId:int}"
+@using Shared.ApiModels
+@using Shared
+@inject HttpClient HttpClient
+
+@if (Recipe == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>Recipe: @Recipe.RecipeName</h3>
+    <StatusComponent Status="Recipe.Status" />
+    
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Unit of measurement</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var parameter in Recipe.Parameters)
+        {
+            <tr>
+                <td>@parameter.Name</td>
+                <td>@parameter.UnitOfMeasurement</td>
+                <td>@parameter.Value</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    @if (Recipe.Status == RecipeStatus.InEditing)
+    {
+        <button @onclick="@OnValidate">Validate recipe</button>
+    }
+}
+
+@code {
+
+    [Parameter]
+    public int RecipeId { get; set; }
+
+    public RecipeModel? Recipe { get; set; }
+
+    protected override async  Task OnInitializedAsync()
+    {
+        Recipe = await HttpClient.GetFromJsonAsync<RecipeModel>
+                                    ($"api/Recipe/FullRecipe?recipeId={RecipeId}");
+    }
+
+    private async Task OnValidate()
+    {
+        await HttpClient.PutAsync($"api/Recipe/Validate/{RecipeId}",null);
+
+        Recipe = await HttpClient.GetFromJsonAsync<RecipeModel>
+            ($"api/Recipe/FullRecipe?recipeId={RecipeId}");
+    }
+}

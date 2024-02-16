@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Server</name>
+    </assembly>
+    <members>
+        <member name="T:WebApplication1.Migrations.DbCreation">
+            <inheritdoc />
+        </member>
+        <member name="M:WebApplication1.Migrations.DbCreation.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WebApplication1.Migrations.DbCreation.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WebApplication1.Migrations.DbCreation.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:WebApplication1.Migrations.AddForeignKey">
+            <inheritdoc />
+        </member>
+        <member name="M:WebApplication1.Migrations.AddForeignKey.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WebApplication1.Migrations.AddForeignKey.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WebApplication1.Migrations.AddForeignKey.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

@@ -1,8 +1,11 @@
 ﻿@using System.Globalization
+@using Microsoft.Extensions.Localization
+@using Client.Translations
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject NavigationManager Navigation
+@inject IStringLocalizer<Dictionary> Localizer
 <p>
-    <label>Culture:</label>
+    <label>@Localizer[nameof(Dictionary.Language)]:</label>
     <select @bind="SelectedCulture" >
         @foreach (var culture in _availableCultures)
         {

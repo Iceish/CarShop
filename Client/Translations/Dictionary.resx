@@ -120,6 +120,9 @@
   <data name="Counter" xml:space="preserve">
     <value>Counter</value>
   </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
   <data name="Recipes" xml:space="preserve">
     <value>Recipes</value>
   </data>

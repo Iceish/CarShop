@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Server.Domain;
 using WebApplication1.Domain;
 
 namespace WebApplication1
@@ -15,25 +16,14 @@ namespace WebApplication1
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Recipe>()
-                .HasMany<Parameter>(x=>x.Parameters)
-                .WithOne()
-                .HasForeignKey(x=>x.RecipeId)
+            modelBuilder.Entity<VehicleModel>().HasKey(x => x.Id);
+
+            modelBuilder.Entity<Vehicle>().HasKey(x => x.Id);
+            modelBuilder.Entity<Vehicle>()
+                .HasOne<VehicleModel>()
+                .WithMany(x => x.Vehicles)
+                .HasForeignKey(x => x.VehicleModelId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Recipe>()
-                .Property(x => x.RecipeName)
-                .HasColumnName("Name");
-
-            modelBuilder.Entity<Parameter>()
-                .HasOne<Recipe>()
-                .WithMany(x => x.Parameters)
-                .HasForeignKey(x => x.RecipeId)
-                .OnDelete(DeleteBehavior.Cascade);
-                
-            modelBuilder.Entity<Parameter>() .HasKey(x => x.ID);
-
-
         }
     }
 }

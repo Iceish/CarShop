@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using WebApplication1;
-using WebApplication1.GraphQL;
 using Path = System.IO.Path;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +10,10 @@ builder.Host.UseSerilog((context, configuration) =>
 
 
 builder.Services.AddDbContext<DbContext, ApplicationDbContext>(
-    c=> c.UseSqlite("Data Source=C:\\Application.db;"));
+    c=> c.UseSqlite(
+        "Data Source=" +
+        Path.Combine(Directory.GetCurrentDirectory(),"Data\\CarShop.db;")
+        ));
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -23,14 +25,6 @@ builder.Services.AddSwaggerGen(c=>
     c.IncludeXmlComments(filePath);
 });
 
-builder.Services.AddGraphQLServer()
-    .AddType<ParameterType>()
-    .AddType<RecipeType>()
-    .AddQueryType<GraphQLQuery>();
-
-builder.Services.AddScoped<GraphQLQuery>();
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,7 +32,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.MapBananaCakePop("/graphql/ui");
     app.UseWebAssemblyDebugging();
 }
 
@@ -52,7 +45,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapFallbackToFile("index.html");
-
-app.MapGraphQL();
 
 app.Run();

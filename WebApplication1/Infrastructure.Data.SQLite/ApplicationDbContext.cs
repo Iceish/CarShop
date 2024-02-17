@@ -13,6 +13,7 @@ namespace WebApplication1
 
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleModel> VehicleModels { get; set; }
+        public DbSet<VehicleMaintenance> VehicleMaintenances { get; set; }
 
     }
 }

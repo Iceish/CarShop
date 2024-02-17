@@ -12,5 +12,9 @@ public class VehicleApiModel
 
     public int VehicleModelId { get; set; }
 
-    public VehicleModelApiModel? VehicleModel { get; set; } = null!;
+    public VehicleModelApiModel VehicleModel { get; set; }
+
+    public IList<VehicleMaintenanceApiModel> Maintenances { get; set; } = new List<VehicleMaintenanceApiModel>();
+
+    public int NextMaintenanceDelta { get; set; }
 }

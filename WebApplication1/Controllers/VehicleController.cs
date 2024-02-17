@@ -14,23 +14,26 @@ namespace WebApplication1.Controllers
         private readonly ILogger<VehicleController> _logger;
 
         private DbSet<Vehicle> VehicleRepository => _dataContext.Set<Vehicle>();
-        private IQueryable<Vehicle> PrepareQueryWithOptionalParameters(string? include)
-        {
-            var query = VehicleRepository.AsQueryable();
-            if (include is not null)
-            {
-                switch (include.ToLower())
-                {
-                    case "vehiclemodel":
-                        query = query.Include(x => x.VehicleModel);
-                        break;
-                    default:
-                        _logger.LogWarning($"Invalid include query parameter: {include}");
-                        throw new ArgumentException("Invalid include query parameter", nameof(include));
-                }
-            }
-            return query;
-        }
+        //private IQueryable<Vehicle> PrepareQueryWithOptionalParameters(string? include)
+        //{
+        //    var query = VehicleRepository.AsQueryable();
+        //    if (include is not null)
+        //    {
+        //        switch (include.ToLower())
+        //        {
+        //            case "vehiclemodel":
+        //                query = query.Include(x => x.VehicleModel);
+        //                break;
+        //            case "maintenances":
+        //                query = query.Include(x => x.VehicleMaintenances);
+        //                break;
+        //            default:
+        //                _logger.LogWarning($"Invalid include query parameter: {include}");
+        //                throw new ArgumentException("Invalid include query parameter", nameof(include));
+        //        }
+        //    }
+        //    return query;
+        //}
 
         public VehicleController(DbContext context, ILogger<VehicleController> logger)
         {
@@ -39,11 +42,11 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(
-            [FromQuery] string? include
-            )
+        public IActionResult Get()
         {
-            var vehicles = PrepareQueryWithOptionalParameters(include)
+            var vehicles = VehicleRepository
+                .Include(x => x.VehicleModel)
+                .Include(x => x.VehicleMaintenances)
                 .OrderBy(x => x.Immatriculation)
                 .AsEnumerable()
                 .Select(VehicleFactory.ConvertToApiModel)
@@ -52,13 +55,27 @@ namespace WebApplication1.Controllers
             return Ok(vehicles);
         }
 
+        [HttpGet("late")]
+        public IActionResult GetLateMaintenance()
+        {
+            var vehicles = VehicleRepository
+                .Include(x => x.VehicleModel)
+                .Include(x => x.VehicleMaintenances)
+                .OrderBy(x => x.Immatriculation)
+                .AsEnumerable()
+                .Select(VehicleFactory.ConvertToApiModel)
+                .Where(x => x.NextMaintenanceDelta <= 0)
+                .ToList();
+
+            return Ok(vehicles);
+        }
+
         [HttpGet("{vehicleId}")]
         public IActionResult Get(
-            [FromRoute] int vehicleId,
-            [FromQuery] string? include
+            [FromRoute] int vehicleId
             )
         {
-            var vehicle = PrepareQueryWithOptionalParameters(include)
+            var vehicle = VehicleRepository
                 .FirstOrDefault(x => x.Id == vehicleId);
 
             if (vehicle == null)
@@ -113,7 +130,7 @@ namespace WebApplication1.Controllers
             VehicleRepository.Remove(vehicle);
             _dataContext.SaveChanges();
 
-            _logger.LogInformation($"The vehicle model with id {vehicleId} has been deleted!");
+            _logger.LogInformation($"The vehicle with id {vehicleId} has been deleted!");
             return Ok();
         }
 

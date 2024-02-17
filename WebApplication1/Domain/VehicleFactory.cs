@@ -17,7 +17,9 @@ namespace WebApplication1.Domain
                 Year = dbEntity.Year,
                 Kilometers = dbEntity.Kilometers,
                 VehicleModelId = dbEntity.VehicleModelId,
-                VehicleModel = VehicleModelFactory.ConvertToApiModel(dbEntity.VehicleModel)
+                VehicleModel = VehicleModelFactory.ConvertToApiModel(dbEntity.VehicleModel),
+                Maintenances = dbEntity.VehicleMaintenances.Select(VehicleMaintenanceFactory.ConvertToApiModel).ToList(),
+                NextMaintenanceDelta = dbEntity.VehicleModel.MaintenanceFrequency - (dbEntity.Kilometers - (dbEntity.VehicleMaintenances.Any() ? dbEntity.VehicleMaintenances.Max(x => x.Kilometers):0))
             };
         }
     }

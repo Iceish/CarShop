@@ -15,7 +15,7 @@ namespace WebApplication1.Domain
                 Id = dbEntity.Id,
                 Name = dbEntity.Name,
                 Brand = dbEntity.Brand,
-                MaintenanceFrequency = dbEntity.MaintenanceFrequency
+                MaintenanceFrequency = dbEntity.MaintenanceFrequency,
             };
         }
 

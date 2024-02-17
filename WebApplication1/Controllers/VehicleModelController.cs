@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Domain;
+using Shared.ApiModels;
 using WebApplication1.Domain;
 
 namespace WebApplication1.Controllers
@@ -13,12 +14,14 @@ namespace WebApplication1.Controllers
         private readonly ILogger<VehicleModelController> _logger;
 
         private DbSet<VehicleModel> VehicleModelRepository => _dataContext.Set<VehicleModel>();
+        
 
-        public VehicleModelController(DbContext context,ILogger<VehicleModelController> logger)
+        public VehicleModelController(DbContext context, ILogger<VehicleModelController> logger)
         {
             _dataContext = context;
             _logger = logger;
         }
+
 
         [HttpGet]
         public IActionResult Get()
@@ -33,7 +36,9 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("{vehicleModelId}")]
-        public IActionResult Get(int vehicleModelId)
+        public IActionResult Get(
+            [FromRoute] int vehicleModelId
+            )
         {
             var vehicleModel = VehicleModelRepository
                 .FirstOrDefault(x => x.Id == vehicleModelId);
@@ -48,58 +53,50 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(string name, string brand, int maintenanceFrequency)
+        [Consumes("application/json")]
+        public IActionResult Create(
+            [FromBody] VehicleModelApiModel vehicleModel
+            )
         {
-
             var newVehicleModel = new VehicleModel()
             {
-                Name = name,
-                Brand = brand,
-                MaintenanceFrequency = maintenanceFrequency
+                Name = vehicleModel.Name,
+                Brand = vehicleModel.Brand,
+                MaintenanceFrequency = vehicleModel.MaintenanceFrequency
             };
 
-            // Backend validation
             var error = new VehicleModelDomainService().Validate(newVehicleModel);
             if (error is not null)
             {
+                _logger.LogWarning($"Vehicle Model validation failed: {error}");
                 return StatusCode(StatusCodes.Status400BadRequest, error.Message);
             }
-
             VehicleModelRepository.Add(newVehicleModel);
-
-            _dataContext.SaveChanges();
-            return Ok();
-        }
-
-        [HttpPut("Rename/{vehicleModelId}")]
-        public IActionResult GetFull(int vehicleModelId, string newName)
-        {
-            var vehicleModelToRename = VehicleModelRepository.FirstOrDefault(x => x.Id == vehicleModelId);
-
-            if (vehicleModelToRename == null)
-            {
-                _logger.LogWarning($"No vehicle model found with id: {vehicleModelId}");
-                return StatusCode(StatusCodes.Status404NotFound);
-            }
-
-            vehicleModelToRename.Name = newName;
-
-            VehicleModelRepository.Update(vehicleModelToRename);
-
             _dataContext.SaveChanges();
 
-            return Ok();
+            return Ok(VehicleModelFactory.ConvertToApiModel(newVehicleModel));
         }
 
         [HttpDelete("{vehicleModelId}")]
-        public void Delete(int vehicleModelId)
+        public IActionResult Delete(
+            [FromRoute] int vehicleModelId
+            )
         {
-            _dataContext.Set<VehicleModel>()
-                .Remove(new VehicleModel { Id = vehicleModelId });
+            var vehicleModel = VehicleModelRepository
+                .FirstOrDefault(x => x.Id == vehicleModelId);
 
+            if (vehicleModel == null)
+            {
+                _logger.LogWarning($"No vehicle found with id: {vehicleModelId}");
+                return StatusCode(StatusCodes.Status404NotFound);
+            }
+
+            
+            VehicleModelRepository.Remove(new VehicleModel { Id = vehicleModelId });
             _dataContext.SaveChanges();
 
             _logger.LogInformation($"The vehicle model with id {vehicleModelId} has been deleted!");
+            return Ok();
         }
 
     }

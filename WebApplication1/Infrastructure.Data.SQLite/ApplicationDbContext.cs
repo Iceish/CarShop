@@ -9,21 +9,10 @@ namespace WebApplication1
         public ApplicationDbContext(DbContextOptions options):
         base(options)
         {
-
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+        public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<VehicleModel> VehicleModels { get; set; }
 
-            modelBuilder.Entity<VehicleModel>().HasKey(x => x.Id);
-
-            modelBuilder.Entity<Vehicle>().HasKey(x => x.Id);
-            modelBuilder.Entity<Vehicle>()
-                .HasOne<VehicleModel>()
-                .WithMany(x => x.Vehicles)
-                .HasForeignKey(x => x.VehicleModelId)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
     }
 }

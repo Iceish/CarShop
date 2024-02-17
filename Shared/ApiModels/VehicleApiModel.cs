@@ -11,5 +11,6 @@ public class VehicleApiModel
     public int Kilometers { get; set; }
 
     public int VehicleModelId { get; set; }
-    public  VehicleModelApiModel VehicleModel { get; set; } = null!;
+
+    public VehicleModelApiModel? VehicleModel { get; set; } = null!;
 }

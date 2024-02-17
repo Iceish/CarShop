@@ -32,9 +32,6 @@ namespace Server.Migrations
                     b.Property<int>("VehicleModelId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("VehicleModelId1")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("Year")
                         .HasColumnType("INTEGER");
 
@@ -42,9 +39,7 @@ namespace Server.Migrations
 
                     b.HasIndex("VehicleModelId");
 
-                    b.HasIndex("VehicleModelId1");
-
-                    b.ToTable("Vehicle");
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("Server.Domain.VehicleModel", b =>
@@ -66,29 +61,18 @@ namespace Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("VehicleModel");
+                    b.ToTable("VehicleModels");
                 });
 
             modelBuilder.Entity("Server.Domain.Vehicle", b =>
                 {
-                    b.HasOne("Server.Domain.VehicleModel", null)
-                        .WithMany("Vehicles")
+                    b.HasOne("Server.Domain.VehicleModel", "VehicleModel")
+                        .WithMany()
                         .HasForeignKey("VehicleModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Server.Domain.VehicleModel", "VehicleModel")
-                        .WithMany()
-                        .HasForeignKey("VehicleModelId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("VehicleModel");
-                });
-
-            modelBuilder.Entity("Server.Domain.VehicleModel", b =>
-                {
-                    b.Navigation("Vehicles");
                 });
 #pragma warning restore 612, 618
         }

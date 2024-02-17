@@ -9,6 +9,4 @@ public class VehicleModel
     public string Brand { get; set; }
 
     public int MaintenanceFrequency { get; set; }
-
-    public IList<Vehicle> Vehicles { get; } = new List<Vehicle>();
 }

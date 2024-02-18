@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Server.Domain;
 using Shared.ApiModels;
 using Shared.Enums;
+using System.Linq;
 using WebApplication1.Domain;
 
 namespace WebApplication1.Controllers
@@ -52,7 +53,7 @@ namespace WebApplication1.Controllers
                 .AsEnumerable()
                 .Select(VehicleFactory.ConvertToApiModel)
                 .ToList();
-            
+
             return Ok(vehicles);
         }
 
@@ -102,7 +103,7 @@ namespace WebApplication1.Controllers
                 FuelType = (VehicleFuelType)vehicle.FuelType,
                 VehicleModelId = vehicle.VehicleModelId
             };
-            
+
             var error = new VehicleDomainService().Validate(newVehicle);
             if (error is not null)
             {
@@ -122,6 +123,45 @@ namespace WebApplication1.Controllers
                         .Load();
 
             return Ok(VehicleFactory.ConvertToApiModel(newVehicle));
+        }
+
+        [HttpPut("{vehicleId}")]
+        [Consumes("application/json")]
+        public IActionResult Update(
+            [FromRoute] int vehicleId,
+            [FromBody] VehicleCreateApiModel vehicleUpdateModel)
+        {
+            var existingVehicle = VehicleRepository.FirstOrDefault(x => x.Id == vehicleId);
+            if (existingVehicle == null)
+            {
+                _logger.LogWarning($"No vehicle found with id: {vehicleId}");
+                return NotFound("Vehicle not found.");
+            }
+
+            existingVehicle.Immatriculation = vehicleUpdateModel.Immatriculation;
+            existingVehicle.Year = vehicleUpdateModel.Year;
+            existingVehicle.Kilometers = vehicleUpdateModel.Kilometers;
+            existingVehicle.FuelType = (VehicleFuelType)vehicleUpdateModel.FuelType;
+            existingVehicle.VehicleModelId = vehicleUpdateModel.VehicleModelId;
+
+            var error = new VehicleDomainService().Validate(existingVehicle);
+            if (error is not null)
+            {
+                _logger.LogWarning($"Vehicle validation failed: {error}");
+                return StatusCode(StatusCodes.Status400BadRequest, error);
+            }
+
+            _dataContext.SaveChanges();
+
+            // Load the related data
+            _dataContext.Entry(existingVehicle)
+                        .Reference(v => v.VehicleModel)
+                        .Load();
+            _dataContext.Entry(existingVehicle)
+                        .Collection(v => v.VehicleMaintenances)
+                        .Load();
+
+            return Ok(VehicleFactory.ConvertToApiModel(existingVehicle));
         }
 
         [HttpDelete("{vehicleId}")]

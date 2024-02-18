@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Serilog;
 using WebApplication1;
 using Path = System.IO.Path;
@@ -10,10 +11,16 @@ builder.Host.UseSerilog((context, configuration) =>
 
 
 builder.Services.AddDbContext<DbContext, ApplicationDbContext>(
-    c=> c.UseSqlite(
+    c =>
+    {
+        c.UseSqlite(
         "Data Source=" +
-        Path.Combine(Directory.GetCurrentDirectory(),"Data\\CarShop.db;")
-        ));
+        Path.Combine(Directory.GetCurrentDirectory(), "Data\\CarShop.db;")
+        );
+        c.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    }
+    );
+
 // Add services to the container.
 
 builder.Services.AddControllers();

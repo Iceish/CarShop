@@ -44,17 +44,7 @@ else
 
 @code {
 
-    private enum ModalMode
-    {
-        Add,
-        Closed
-    }
-
-    private ModalMode _modalMode = ModalMode.Closed;
-
     private VehicleApiModel? _selectedVehicle;
-
-    public VehicleCreateApiModel modalVehicle { get; set; } = new VehicleCreateApiModel();
 
     private IList<VehicleApiModel>? _vehicles;
     private IList<VehicleModelApiModel>? _vehicleModels;

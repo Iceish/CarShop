@@ -1,0 +1,40 @@
+﻿@page "/vehicles/details/{VehicleId:int}"
+@using Shared.ApiModels
+@using Shared.Enums
+@using Microsoft.Extensions.Localization
+@using Client.Translations
+@inject HttpClient HttpClient
+@inject IJSRuntime JSRuntime
+@inject IStringLocalizer<Dictionary> Localizer
+
+<PageTitle>@Localizer[nameof(Dictionary.Vehicle)]</PageTitle>
+
+<h1>@Localizer[nameof(Dictionary.Vehicle)]</h1>
+
+
+@if(Vehicle == null)
+{
+    <p><em>@Localizer[nameof(Dictionary.Loading)]...</em></p>
+}
+else
+{
+    <p>@Vehicle.VehicleModel.Brand</p>
+    <p>@Vehicle.VehicleModel.Name</p>
+    <p>@Vehicle.Immatriculation</p>
+}
+
+@code {
+
+    [Parameter]
+    public int VehicleId { get; set; }
+
+    private VehicleApiModel? _selectedVehicle;
+
+    private VehicleApiModel? Vehicle;
+
+    protected  override async Task OnInitializedAsync()
+    {
+        Vehicle = await HttpClient.GetFromJsonAsync<VehicleApiModel>($"api/Vehicle/{VehicleId}");
+    }
+
+}

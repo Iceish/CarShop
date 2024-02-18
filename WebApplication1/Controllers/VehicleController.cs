@@ -82,6 +82,8 @@ namespace WebApplication1.Controllers
             )
         {
             var vehicle = VehicleRepository
+                .Include(x => x.VehicleModel)
+                .Include(x => x.VehicleMaintenances)
                 .FirstOrDefault(x => x.Id == vehicleId);
 
             if (vehicle == null)

@@ -35,7 +35,7 @@ else
             <tr>
                 <td>@vehicle.VehicleModel.Brand</td>
                 <td>@vehicle.VehicleModel.Name</td>
-                <td>@vehicle.Immatriculation</td>
+                <td><a href="vehicles/details/@vehicle.Id">@vehicle.Immatriculation</a></td>
                 <td>
                     <button class="btn btn-danger" 
                             @onclick="@(()=>OnDelete(vehicle))">@Localizer[nameof(Dictionary.Delete)]</button>

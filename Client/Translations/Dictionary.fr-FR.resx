@@ -183,6 +183,9 @@
   <data name="Save" xml:space="preserve">
     <value>Sauvegarder</value>
   </data>
+  <data name="Update" xml:space="preserve">
+    <value>Mettre à jour</value>
+  </data>
   <data name="Vehicle" xml:space="preserve">
     <value>Véhicule</value>
   </data>

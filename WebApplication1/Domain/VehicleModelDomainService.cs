@@ -9,11 +9,8 @@ public class VehicleModelDomainService
         if (string.IsNullOrWhiteSpace(vehicleModel.Name))
             return new ValidationException("The Vehicle model name must not be null.");
 
-        if (vehicleModel.Name.Length < 1)
-            return new ValidationException("The Vehicle model name must be at least 1 character.");
-
-        if (vehicleModel.Name.Length > 64)
-            return new ValidationException("The Vehicle model name must be at most 64 characters.");
+        if (vehicleModel.Name.Length < 1 || vehicleModel.Name.Length > 64)
+            return new ValidationException("The Vehicle model name must be between 1 and 64 characters.");
 
         if (vehicleModel.Brand == null)
             return new ValidationException("The Vehicle model brand must not be null.");

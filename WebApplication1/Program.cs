@@ -23,6 +23,11 @@ builder.Services.AddSwaggerGen(c=>
 {
     var filePath = Path.Combine(AppContext.BaseDirectory, "WebApi.xml");
     c.IncludeXmlComments(filePath);
+    c.SwaggerDoc("v1", new () {
+        Title = "CarShop",
+        Version = "v1",
+        Description = "CarShop API made with Entity Framework to manage Vehicles.",
+    });
 });
 
 var app = builder.Build();

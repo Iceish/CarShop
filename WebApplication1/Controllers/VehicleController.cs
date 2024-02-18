@@ -16,33 +16,18 @@ namespace WebApplication1.Controllers
         private readonly ILogger<VehicleController> _logger;
 
         private DbSet<Vehicle> VehicleRepository => _dataContext.Set<Vehicle>();
-        //private IQueryable<Vehicle> PrepareQueryWithOptionalParameters(string? include)
-        //{
-        //    var query = VehicleRepository.AsQueryable();
-        //    if (include is not null)
-        //    {
-        //        switch (include.ToLower())
-        //        {
-        //            case "vehiclemodel":
-        //                query = query.Include(x => x.VehicleModel);
-        //                break;
-        //            case "maintenances":
-        //                query = query.Include(x => x.VehicleMaintenances);
-        //                break;
-        //            default:
-        //                _logger.LogWarning($"Invalid include query parameter: {include}");
-        //                throw new ArgumentException("Invalid include query parameter", nameof(include));
-        //        }
-        //    }
-        //    return query;
-        //}
-
         public VehicleController(DbContext context, ILogger<VehicleController> logger)
         {
             _dataContext = context;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Retreive all vehicles.
+        /// </summary>
+        /// <returns>Vehicle Array</returns>
+        /// <response code="200">Vehicles found</response>
+        /// <response code="204">No vehicles found</response>
         [HttpGet]
         public IActionResult Get()
         {
@@ -54,9 +39,18 @@ namespace WebApplication1.Controllers
                 .Select(VehicleFactory.ConvertToApiModel)
                 .ToList();
 
+            if (!vehicles.Any())
+                return StatusCode(StatusCodes.Status204NoContent);
+
             return Ok(vehicles);
         }
 
+        /// <summary>
+        /// Retreive all vehicles that are late for maintenance.
+        /// </summary>
+        /// <returns>Vehicle Array</returns>
+        /// <response code="200">Vehicles found</response>
+        /// <response code="204">No vehicles found</response>
         [HttpGet("late")]
         public IActionResult GetLateMaintenance()
         {
@@ -69,9 +63,19 @@ namespace WebApplication1.Controllers
                 .Where(x => x.NextMaintenanceDelta <= 0)
                 .ToList();
 
+            if (!vehicles.Any())
+                return StatusCode(StatusCodes.Status204NoContent);
+
             return Ok(vehicles);
         }
 
+        /// <summary>
+        /// Retreive a vehicle by its id.
+        /// </summary>
+        /// <param name="vehicleId"></param>
+        /// <returns>Vehicle</returns>
+        /// <response code="200">Vehicle found</response>
+        /// <response code="404">Vehicle not found</response>
         [HttpGet("{vehicleId}")]
         public IActionResult Get(
             [FromRoute] int vehicleId
@@ -89,6 +93,18 @@ namespace WebApplication1.Controllers
             return Ok(VehicleFactory.ConvertToApiModel(vehicle));
         }
 
+        /// <summary>
+        /// Create a new vehicle.
+        /// </summary>
+        /// <remarks>
+        /// It will return the newly created vehicle with all it's relations.
+        /// 
+        /// Available FuelType: Gasoline=1,Diesel=2,Ethanol=3,Flex=4,Electric=5,Hybrid=6,Hydrogen=7,NaturalGas=8,Propane=9,Other=0
+        /// </remarks>
+        /// <param name="vehicle"></param>
+        /// <returns>Vehicle</returns>
+        /// <response code="200">Vehicle created successfully</response>
+        /// <response code="400">Vehicle creation failed</response>
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Create(
@@ -125,6 +141,20 @@ namespace WebApplication1.Controllers
             return Ok(VehicleFactory.ConvertToApiModel(newVehicle));
         }
 
+        /// <summary>
+        /// Update a vehicle.
+        /// </summary>
+        /// <remarks>
+        /// It will return vehicle updated with all it's relations.
+        /// 
+        /// Available FuelType: Gasoline=1,Diesel=2,Ethanol=3,Flex=4,Electric=5,Hybrid=6,Hydrogen=7,NaturalGas=8,Propane=9,Other=0
+        /// </remarks>
+        /// <param name="vehicleId"></param>
+        /// <param name="vehicleUpdateModel"></param>
+        /// <returns>Vehicle</returns>
+        /// <response code="200">Vehicle updated successfully</response>
+        /// <response code="404">Vehicle not found</response>
+        /// <response code="400">Vehicle update failed</response>
         [HttpPut("{vehicleId}")]
         [Consumes("application/json")]
         public IActionResult Update(
@@ -164,6 +194,13 @@ namespace WebApplication1.Controllers
             return Ok(VehicleFactory.ConvertToApiModel(existingVehicle));
         }
 
+        /// <summary>
+        /// Delete a vehicle.
+        /// </summary>
+        /// <param name="vehicleId"></param>
+        /// <returns></returns>
+        /// <response code="200">Vehicle deleted successfully</response>
+        /// <response code="404">Vehicle not found</response>
         [HttpDelete("{vehicleId}")]
         public IActionResult Delete(
             [FromRoute] int vehicleId

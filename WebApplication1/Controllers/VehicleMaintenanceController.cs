@@ -14,23 +14,6 @@ namespace WebApplication1.Controllers
         private readonly ILogger<VehicleMaintenanceController> _logger;
 
         private DbSet<VehicleMaintenance> VehicleMaintenanceRepository => _dataContext.Set<VehicleMaintenance>();
-        private IQueryable<VehicleMaintenance> PrepareQueryWithOptionalParameters(string? include)
-        {
-            var query = VehicleMaintenanceRepository.AsQueryable();
-            if (include is not null)
-            {
-                switch (include.ToLower())
-                {
-                    case "vehicle":
-                        query = query.Include(x => x.Vehicle);
-                        break;
-                    default:
-                        _logger.LogWarning($"Invalid include query parameter: {include}");
-                        throw new ArgumentException("Invalid include query parameter", nameof(include));
-                }
-            }
-            return query;
-        }
 
         public VehicleMaintenanceController(DbContext context, ILogger<VehicleMaintenanceController> logger)
         {
@@ -38,12 +21,16 @@ namespace WebApplication1.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Retreive all vehicle maintenances.
+        /// </summary>
+        /// <returns>Vehicle maintenances Array</returns>
+        /// <response code="200">Vehicle maintenances found</response>
+        /// <response code="204">No vehicle maintenances found</response>
         [HttpGet]
-        public IActionResult Get(
-            [FromQuery] string? include
-            )
+        public IActionResult Get()
         {
-            var vehicleMaintenance = PrepareQueryWithOptionalParameters(include)
+            var vehicleMaintenance = VehicleMaintenanceRepository
                 .OrderBy(x => x.Date)
                 .AsEnumerable()
                 .Select(VehicleMaintenanceFactory.ConvertToApiModel)
@@ -52,13 +39,19 @@ namespace WebApplication1.Controllers
             return Ok(vehicleMaintenance);
         }
 
+        /// <summary>
+        /// Retreive a vehicle maintenance by its id.
+        /// </summary>
+        /// <param name="vehicleMaintenanceId"></param>
+        /// <returns>Vehicle maintenance</returns>
+        /// <response code="200">Vehicle maintenance found</response>
+        /// <response code="404">Vehicle maintenance not found</response>
         [HttpGet("{vehicleMaintenanceId}")]
         public IActionResult Get(
-            [FromRoute] int vehicleMaintenanceId,
-            [FromQuery] string? include
+            [FromRoute] int vehicleMaintenanceId
             )
         {
-            var vehicleMaintenance = PrepareQueryWithOptionalParameters(include)
+            var vehicleMaintenance = VehicleMaintenanceRepository
                 .FirstOrDefault(x => x.Id == vehicleMaintenanceId);
 
             if (vehicleMaintenance == null)
@@ -70,6 +63,16 @@ namespace WebApplication1.Controllers
             return Ok(VehicleMaintenanceFactory.ConvertToApiModel(vehicleMaintenance));
         }
 
+        /// <summary>
+        /// Create a new vehicle maintenance.
+        /// </summary>
+        /// <remarks>
+        /// It will return the newly created vehicle maintenance.
+        /// </remarks>
+        /// <param name="vehicleMaintenance"></param>
+        /// <returns>Vehicle maintenance</returns>
+        /// <response code="200">Vehicle maintenance created successfully</response>
+        /// <response code="400">Vehicle maintenance creation failed</response>
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Create(
@@ -102,6 +105,13 @@ namespace WebApplication1.Controllers
             return Ok(VehicleMaintenanceFactory.ConvertToApiModel(newVehicleMaintenance));
         }
 
+        /// <summary>
+        /// Delete a vehicle maintenance.
+        /// </summary>
+        /// <param name="vehicleMaintenanceId"></param>
+        /// <returns></returns>
+        /// <response code="200">Vehicle maintenance deleted successfully</response>
+        /// <response code="404">Vehicle maintenance not found</response>
         [HttpDelete("{vehicleMaintenanceId}")]
         public IActionResult Delete(
             [FromRoute] int vehicleMaintenanceId

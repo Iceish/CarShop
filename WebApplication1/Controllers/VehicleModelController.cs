@@ -22,7 +22,12 @@ namespace WebApplication1.Controllers
             _logger = logger;
         }
 
-
+        /// <summary>
+        /// Retreive all vehicle models.
+        /// </summary>
+        /// <returns>Vehicle model Array</returns>
+        /// <response code="200">Vehicle model found</response>
+        /// <response code="204">No vehicle model found</response>
         [HttpGet]
         public IActionResult Get()
         {
@@ -32,9 +37,19 @@ namespace WebApplication1.Controllers
                 .Select(x => VehicleModelFactory.ConvertToApiModel(x))
                 .ToList();
 
+            if (!vehicleModels.Any())
+                return StatusCode(StatusCodes.Status204NoContent);
+
             return Ok(vehicleModels);
         }
 
+        /// <summary>
+        /// Retreive a vehicle model by its id.
+        /// </summary>
+        /// <param name="vehicleModelId"></param>
+        /// <returns>Vehicle model</returns>
+        /// <response code="200">Vehicle model found</response>
+        /// <response code="404">Vehicle model not found</response>
         [HttpGet("{vehicleModelId}")]
         public IActionResult Get(
             [FromRoute] int vehicleModelId
@@ -52,6 +67,18 @@ namespace WebApplication1.Controllers
             return Ok(VehicleModelFactory.ConvertToApiModel(vehicleModel));
         }
 
+        /// <summary>
+        /// Create a new vehicle model.
+        /// </summary>
+        /// <remarks>
+        /// It will return the newly created vehicle model.
+        /// 
+        /// Available brands: "Toyota", "Ford", "Chevrolet", "Nissan"
+        /// </remarks>
+        /// <param name="vehicleModel"></param>
+        /// <returns>Vehicle model</returns>
+        /// <response code="200">Vehicle model created successfully</response>
+        /// <response code="400">Vehicle model creation failed</response>
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Create(
@@ -77,6 +104,13 @@ namespace WebApplication1.Controllers
             return Ok(VehicleModelFactory.ConvertToApiModel(newVehicleModel));
         }
 
+        /// <summary>
+        /// Delete a vehicle model.
+        /// </summary>
+        /// <param name="vehicleModelId"></param>
+        /// <returns></returns>
+        /// <response code="200">Vehicle model deleted successfully</response>
+        /// <response code="404">Vehicle model not found</response>
         [HttpDelete("{vehicleModelId}")]
         public IActionResult Delete(
             [FromRoute] int vehicleModelId

@@ -11,7 +11,7 @@ using WebApplication1;
 namespace Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240217185218_DbCreation")]
+    [Migration("20240218113028_DbCreation")]
     partial class DbCreation
     {
         /// <inheritdoc />
@@ -24,6 +24,9 @@ namespace Server.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FuelType")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Immatriculation")

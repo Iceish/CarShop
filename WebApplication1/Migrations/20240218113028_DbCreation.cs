@@ -35,6 +35,7 @@ namespace Server.Migrations
                     Immatriculation = table.Column<string>(type: "TEXT", nullable: false),
                     Year = table.Column<int>(type: "INTEGER", nullable: false),
                     Kilometers = table.Column<int>(type: "INTEGER", nullable: false),
+                    FuelType = table.Column<int>(type: "INTEGER", nullable: false),
                     VehicleModelId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

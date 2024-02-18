@@ -73,7 +73,7 @@ namespace WebApplication1.Controllers
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Create(
-            [FromBody] VehicleMaintenanceApiModel vehicleMaintenance
+            [FromBody] VehicleMaintenanceCreateApiModel vehicleMaintenance
             )
         {
             var vehicle = _dataContext.Set<Vehicle>().FirstOrDefault(x => x.Id == vehicleMaintenance.VehicleId);

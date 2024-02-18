@@ -55,7 +55,7 @@ namespace WebApplication1.Controllers
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Create(
-            [FromBody] VehicleModelApiModel vehicleModel
+            [FromBody] VehicleModelCreateApiModel vehicleModel
             )
         {
             var newVehicleModel = new VehicleModel()

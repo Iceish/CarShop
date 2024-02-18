@@ -1,5 +1,6 @@
 ﻿using Server.Domain;
 using Shared.ApiModels;
+using Shared.Enums;
 
 namespace WebApplication1.Domain
 {
@@ -16,6 +17,7 @@ namespace WebApplication1.Domain
                 Immatriculation = dbEntity.Immatriculation,
                 Year = dbEntity.Year,
                 Kilometers = dbEntity.Kilometers,
+                FuelType = (VehicleFuelType)dbEntity.FuelType,
                 VehicleModelId = dbEntity.VehicleModelId,
                 VehicleModel = VehicleModelFactory.ConvertToApiModel(dbEntity.VehicleModel),
                 Maintenances = dbEntity.VehicleMaintenances.Select(VehicleMaintenanceFactory.ConvertToApiModel).ToList(),

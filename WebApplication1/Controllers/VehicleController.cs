@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Server.Domain;
 using Shared.ApiModels;
+using Shared.Enums;
 using WebApplication1.Domain;
 
 namespace WebApplication1.Controllers
@@ -90,7 +91,7 @@ namespace WebApplication1.Controllers
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Create(
-            [FromBody] VehicleApiModel vehicle
+            [FromBody] VehicleCreateApiModel vehicle
             )
         {
             var newVehicle = new Vehicle()
@@ -98,6 +99,7 @@ namespace WebApplication1.Controllers
                 Immatriculation = vehicle.Immatriculation,
                 Year = vehicle.Year,
                 Kilometers = vehicle.Kilometers,
+                FuelType = (VehicleFuelType)vehicle.FuelType,
                 VehicleModelId = vehicle.VehicleModelId
             };
             
@@ -107,8 +109,17 @@ namespace WebApplication1.Controllers
                 _logger.LogWarning($"Vehicle validation failed: {error}");
                 return StatusCode(StatusCodes.Status400BadRequest, error);
             }
+
             VehicleRepository.Add(newVehicle);
             _dataContext.SaveChanges();
+
+            // Load the related data
+            _dataContext.Entry(newVehicle)
+                .Reference(v => v.VehicleModel)
+                .Load();
+            _dataContext.Entry(newVehicle)
+                        .Collection(v => v.VehicleMaintenances)
+                        .Load();
 
             return Ok(VehicleFactory.ConvertToApiModel(newVehicle));
         }

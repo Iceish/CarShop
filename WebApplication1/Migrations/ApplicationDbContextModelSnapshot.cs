@@ -23,6 +23,9 @@ namespace Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("FuelType")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Immatriculation")
                         .IsRequired()
                         .HasColumnType("TEXT");

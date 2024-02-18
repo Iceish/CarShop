@@ -120,10 +120,25 @@
   <data name="Counter" xml:space="preserve">
     <value>Compteur</value>
   </data>
+  <data name="Home" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>
   </data>
+  <data name="Model" xml:space="preserve">
+    <value>Modèle</value>
+  </data>
+  <data name="Models" xml:space="preserve">
+    <value>Modèles</value>
+  </data>
   <data name="Recipes" xml:space="preserve">
     <value>Recettes</value>
+  </data>
+  <data name="Vehicle" xml:space="preserve">
+    <value>Véhicule</value>
+  </data>
+  <data name="Vehicles" xml:space="preserve">
+    <value>Véhicules</value>
   </data>
 </root>

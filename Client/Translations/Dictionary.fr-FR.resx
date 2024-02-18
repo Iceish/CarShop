@@ -138,8 +138,17 @@
   <data name="Delete" xml:space="preserve">
     <value>Supprimer</value>
   </data>
+  <data name="DeleteConfirmation" xml:space="preserve">
+    <value>Voulez-vous vraiement supprimer</value>
+  </data>
+  <data name="FuelType" xml:space="preserve">
+    <value>Type de carburant</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Accueil</value>
+  </data>
+  <data name="Kilometers" xml:space="preserve">
+    <value>Kilomètres</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>
@@ -162,6 +171,9 @@
   <data name="Recipes" xml:space="preserve">
     <value>Recettes</value>
   </data>
+  <data name="Registration" xml:space="preserve">
+    <value>Immatriculation</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Sauvegarder</value>
   </data>
@@ -170,5 +182,8 @@
   </data>
   <data name="Vehicles" xml:space="preserve">
     <value>Véhicules</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Année</value>
   </data>
 </root>

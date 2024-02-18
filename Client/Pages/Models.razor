@@ -1,57 +1,156 @@
 ﻿@page "/models"
-@inject HttpClient Http
+@using Shared.ApiModels
+@inject HttpClient HttpClient
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Weather</PageTitle>
 
 <h1>Weather</h1>
 
-<p>This component demonstrates fetching data from the server.</p>
 
-@if (forecasts == null)
+@if(_models == null)
 {
-    <p><em>Loading...</em></p>
+<p><em>Loading...</em></p>
 }
 else
 {
+    <button class="btn btn-primary"
+                @onclick="@(OpenAddPopup)">Add</button>
     <table class="table">
         <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
+        <tr>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Maintenance frequency</th>
+            <th>Actions</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
+        @foreach (var model in _models)
+        {
+            <tr>
+                <td>@model.Brand</td>
+                <td><a href="/models/detail/@model.Id">@model.Name</a></td>
+                <td>@model.MaintenanceFrequency</td>
+                <td>
+                    <button class="btn btn-danger" 
+                            @onclick="@(()=>OnDelete(model))">Delete</button>
+                </td>
+            </tr>
+        }
         </tbody>
+
     </table>
+
+        <div class="modal fade show " id="myModal" style=" display: @(_modalMode==ModalMode.Closed? "none":"block");">
+            <div class="modal-dialog bg-light" role="document">
+                <div class="modal-content">
+                    <div class="modal-header d-flex flex-column">
+                        @if (_modalMode == ModalMode.Add)
+                        {
+                            <h3>Create new model</h3>
+                            <div class="modal-body d-flex flex-column">
+                                <label for="modal-name">Name</label>
+                                <input id="modal-name" @bind="@modalVehicleModel.Name" placeholder="Auris"/>
+                                <label for="modal-brand">Brand</label>
+                                <input id="modal-brand" @bind="@modalVehicleModel.Brand" placeholder="Toyota" />
+                                <label for="modal-maintenancefrequency">Maintenance Frequency</label
+                                <input id="modal-maintenancefrequency" @bind="@modalVehicleModel.MaintenanceFrequency" placeholder="0" />
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button class="btn-primary" @onclick="@OnSave">Save</button>
+                        <button class="btn-primary" @onclick="@OnCancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
 
-    protected override async Task OnInitializedAsync()
+    private enum ModalMode
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        Add,
+        Duplicate,
+        Rename,
+        Closed
     }
 
-    public class WeatherForecast
+    private ModalMode _modalMode=ModalMode.Closed;
+
+    private VehicleModelApiModel? _selectedModel;
+
+    public VehicleModelCreateApiModel modalVehicleModel { get; set; } = new VehicleModelCreateApiModel();
+
+    private IList<VehicleModelApiModel>? _models;
+
+    protected  override async Task OnInitializedAsync()
     {
-        public DateOnly Date { get; set; }
+        _models = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/VehicleModel");
 
-        public int TemperatureC { get; set; }
-
-        public string? Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
     }
+
+    private async Task OpenAddPopup()
+    {
+        modalVehicleModel = new VehicleModelCreateApiModel();
+        _modalMode = ModalMode.Add;
+    }
+
+    private async Task OnDelete(VehicleModelApiModel model)
+    {
+        var popupResult = await JSRuntime.InvokeAsync<bool>
+            ("confirm", $"Are you sure you want to delete the model '{model.Name}'?");
+
+        if (popupResult == true)
+        {
+            var httpStatus = await HttpClient.DeleteAsync($"api/model/{model.Id}");
+            if (!httpStatus.IsSuccessStatusCode)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", httpStatus.ReasonPhrase);
+            }
+        }
+
+
+
+        _models = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/model");
+    }
+
+    private async Task OnCancel()
+    {
+        _modalMode = ModalMode.Closed;
+    }
+
+    private async Task OnSave()
+    {
+        switch (_modalMode)
+        {
+            case ModalMode.Add:
+                await OnAdd();
+                break;
+        }
+    }
+
+    private async Task OnAdd()
+    {
+        var newVehicleModel = new
+        {
+            Name = modalVehicleModel.Name,
+            Brand = modalVehicleModel.Brand,
+            MaintenanceFrequency = modalVehicleModel.MaintenanceFrequency
+ 		};
+        JsonContent content = JsonContent.Create(newVehicleModel);
+        var httpStatus=await HttpClient.PostAsync($"api/VehicleModel", content);
+        if (!httpStatus.IsSuccessStatusCode)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", httpStatus.ReasonPhrase);
+        }
+
+        _modalMode = ModalMode.Closed;
+
+        _models = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/VehicleModel");
+    }
+
 }

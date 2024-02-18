@@ -169,6 +169,24 @@ namespace Client.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Late.
+        /// </summary>
+        public static string Late {
+            get {
+                return ResourceManager.GetString("Late", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vehicles late for maintenance.
+        /// </summary>
+        public static string LateVehicles {
+            get {
+                return ResourceManager.GetString("LateVehicles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading.
         /// </summary>
         public static string Loading {

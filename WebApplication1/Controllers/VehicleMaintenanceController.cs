@@ -76,13 +76,19 @@ namespace WebApplication1.Controllers
             [FromBody] VehicleMaintenanceApiModel vehicleMaintenance
             )
         {
+            var vehicle = _dataContext.Set<Vehicle>().FirstOrDefault(x => x.Id == vehicleMaintenance.VehicleId);
+            int currentKilometers = (vehicle is not null) ? vehicle.Kilometers : 0;
+
+
             var newVehicleMaintenance = new VehicleMaintenance()
             {
                 Date = DateTime.Now,
-                Kilometers = vehicleMaintenance.Kilometers,
+                Kilometers = currentKilometers,
                 Description = vehicleMaintenance.Description,
                 VehicleId = vehicleMaintenance.VehicleId
             };
+
+            
             
             var error = new VehicleMaintenanceDomainService().Validate(newVehicleMaintenance);
             if (error is not null)

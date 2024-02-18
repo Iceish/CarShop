@@ -1,5 +1,6 @@
 ﻿using Server.Domain;
 using Shared.ApiModels;
+using Shared.Enums;
 
 namespace WebApplication1.Domain
 {
@@ -14,7 +15,7 @@ namespace WebApplication1.Domain
             {
                 Id = dbEntity.Id,
                 Name = dbEntity.Name,
-                Brand = dbEntity.Brand,
+                Brand = (VehicleBrand)dbEntity.Brand,
                 MaintenanceFrequency = dbEntity.MaintenanceFrequency,
             };
         }

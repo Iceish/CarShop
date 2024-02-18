@@ -18,7 +18,7 @@ namespace Server.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Brand = table.Column<string>(type: "TEXT", nullable: false),
+                    Brand = table.Column<int>(type: "INTEGER", nullable: false),
                     MaintenanceFrequency = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

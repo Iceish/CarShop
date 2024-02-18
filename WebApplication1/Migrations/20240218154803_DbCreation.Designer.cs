@@ -11,7 +11,7 @@ using WebApplication1;
 namespace Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240218113028_DbCreation")]
+    [Migration("20240218154803_DbCreation")]
     partial class DbCreation
     {
         /// <inheritdoc />
@@ -81,9 +81,8 @@ namespace Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Brand")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Brand")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("MaintenanceFrequency")
                         .HasColumnType("INTEGER");

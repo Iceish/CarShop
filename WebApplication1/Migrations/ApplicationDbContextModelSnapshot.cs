@@ -78,9 +78,8 @@ namespace Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Brand")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Brand")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("MaintenanceFrequency")
                         .HasColumnType("INTEGER");

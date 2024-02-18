@@ -1,4 +1,6 @@
-﻿namespace Server.Domain;
+﻿using Shared.Enums;
+
+namespace Server.Domain;
 
 public class VehicleModel
 {
@@ -6,7 +8,7 @@ public class VehicleModel
 
     public string Name { get; set; }
 
-    public string Brand { get; set; }
+    public VehicleBrand Brand { get; set; }
 
     public int MaintenanceFrequency { get; set; }
 }

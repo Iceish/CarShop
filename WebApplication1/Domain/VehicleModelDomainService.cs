@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Shared.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Server.Domain;
 public class VehicleModelDomainService
@@ -14,12 +15,6 @@ public class VehicleModelDomainService
 
         if (vehicleModel.Brand == null)
             return new ValidationException("The Vehicle model brand must not be null.");
-
-        IList<string> validBrands = new List<string> { "Toyota", "Ford", "Chevrolet", "Nissan" };
-        if (!validBrands.Contains(vehicleModel.Brand))
-        {
-            return new ValidationException("Invalid brand. Choose on of thoses : " + string.Join(",", validBrands) + "");
-        }
 
         if (vehicleModel.MaintenanceFrequency < 0)
             return new ValidationException("The Vehicle model maintenance frequency must be positive.");

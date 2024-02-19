@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Server.Domain;
 using Shared.ApiModels;
 using Shared.Enums;
-using System.Linq;
 using WebApplication1.Domain;
 
 namespace WebApplication1.Controllers;
@@ -16,6 +15,10 @@ public class VehicleController : ControllerBase
     private readonly ILogger<VehicleController> _logger;
 
     private DbSet<Vehicle> VehicleRepository => _dataContext.Set<Vehicle>();
+    private IQueryable<Vehicle> VehicleRepositoryWithIncludes => VehicleRepository
+        .Include(x => x.VehicleModel)
+        .Include(x => x.VehicleMaintenances.OrderByDescending(y => y.Date).ThenByDescending(z => z.Kilometers));
+
     public VehicleController(DbContext context, ILogger<VehicleController> logger)
     {
         _dataContext = context;
@@ -31,9 +34,7 @@ public class VehicleController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        var vehicles = VehicleRepository
-            .Include(x => x.VehicleModel)
-            .Include(x => x.VehicleMaintenances.OrderByDescending(y => y.Date).ThenByDescending(z => z.Kilometers))
+        var vehicles = VehicleRepositoryWithIncludes
             .OrderBy(x => x.Immatriculation)
             .AsEnumerable()
             .Select(VehicleFactory.ConvertToApiModel)
@@ -54,9 +55,7 @@ public class VehicleController : ControllerBase
     [HttpGet("late")]
     public IActionResult GetLateMaintenance()
     {
-        var vehicles = VehicleRepository
-            .Include(x => x.VehicleModel)
-            .Include(x => x.VehicleMaintenances.OrderByDescending(y => y.Date).ThenByDescending(z => z.Kilometers))
+        var vehicles = VehicleRepositoryWithIncludes
             .OrderBy(x => x.Immatriculation)
             .AsEnumerable()
             .Select(VehicleFactory.ConvertToApiModel)
@@ -81,9 +80,7 @@ public class VehicleController : ControllerBase
         [FromRoute] int vehicleId
         )
     {
-        var vehicle = VehicleRepository
-            .Include(x => x.VehicleModel)
-            .Include(x => x.VehicleMaintenances.OrderByDescending(y => y.Date).ThenByDescending(z => z.Kilometers))
+        var vehicle = VehicleRepositoryWithIncludes
             .FirstOrDefault(x => x.Id == vehicleId);
 
         if (vehicle == null)

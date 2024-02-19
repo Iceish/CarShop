@@ -33,7 +33,7 @@ public class VehicleController : ControllerBase
     {
         var vehicles = VehicleRepository
             .Include(x => x.VehicleModel)
-            .Include(x => x.VehicleMaintenances)
+            .Include(x => x.VehicleMaintenances.OrderByDescending(y => y.Date).ThenByDescending(z => z.Kilometers))
             .OrderBy(x => x.Immatriculation)
             .AsEnumerable()
             .Select(VehicleFactory.ConvertToApiModel)
@@ -56,7 +56,7 @@ public class VehicleController : ControllerBase
     {
         var vehicles = VehicleRepository
             .Include(x => x.VehicleModel)
-            .Include(x => x.VehicleMaintenances)
+            .Include(x => x.VehicleMaintenances.OrderByDescending(y => y.Date).ThenByDescending(z => z.Kilometers))
             .OrderBy(x => x.Immatriculation)
             .AsEnumerable()
             .Select(VehicleFactory.ConvertToApiModel)
@@ -83,7 +83,7 @@ public class VehicleController : ControllerBase
     {
         var vehicle = VehicleRepository
             .Include(x => x.VehicleModel)
-            .Include(x => x.VehicleMaintenances)
+            .Include(x => x.VehicleMaintenances.OrderByDescending(y => y.Date).ThenByDescending(z => z.Kilometers))
             .FirstOrDefault(x => x.Id == vehicleId);
 
         if (vehicle == null)

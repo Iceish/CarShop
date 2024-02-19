@@ -162,8 +162,14 @@
   <data name="Loading" xml:space="preserve">
     <value>Chargement en cours</value>
   </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>Entretien</value>
+  </data>
   <data name="MaintenanceFrequency" xml:space="preserve">
     <value>Fréquence de maintenance</value>
+  </data>
+  <data name="Maintenances" xml:space="preserve">
+    <value>Entretiens</value>
   </data>
   <data name="Model" xml:space="preserve">
     <value>Modèle</value>
@@ -188,6 +194,9 @@
   </data>
   <data name="Vehicle" xml:space="preserve">
     <value>Véhicule</value>
+  </data>
+  <data name="VehicleDetails" xml:space="preserve">
+    <value>Détails véhicule</value>
   </data>
   <data name="Vehicles" xml:space="preserve">
     <value>Véhicules</value>

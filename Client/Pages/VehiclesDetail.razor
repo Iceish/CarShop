@@ -18,36 +18,74 @@
 }
 else
 {
-    <h1>@Localizer[nameof(Dictionary.Vehicle)] - @Vehicle.Immatriculation</h1>
+    <h1>@Localizer[nameof(Dictionary.VehicleDetails)] - @Vehicle.Immatriculation</h1>
+    
+    <div class="d-flex flex-row w-100 gap-5">
+        <div class="d-flex flex-column w-100">
+            <h2>@Localizer[nameof(Dictionary.Vehicle)]</h2>
+            <label for="modal-name">@Localizer[nameof(Dictionary.Registration)]</label>
+            <input id="modal-name" @bind="@Vehicle.Immatriculation" placeholder="AA-111-AA" />
 
-    <div class="d-flex flex-column">
-        <label for="modal-name">@Localizer[nameof(Dictionary.Registration)]</label>
-        <input id="modal-name" @bind="@Vehicle.Immatriculation" placeholder="AA-111-AA" />
+            <label for="modal-year">@Localizer[nameof(Dictionary.Year)]</label>
+            <input id="modal-year" @bind="@Vehicle.Year" placeholder="2010" />
 
-        <label for="modal-year">@Localizer[nameof(Dictionary.Year)]</label>
-        <input id="modal-year" @bind="@Vehicle.Year" placeholder="2010" />
+            <label for="modal-kilometers">@Localizer[nameof(Dictionary.Kilometers)]</label>
+            <input id="modal-kilometers" @bind="@Vehicle.Kilometers" placeholder="10500" />
 
-        <label for="modal-kilometers">@Localizer[nameof(Dictionary.Kilometers)]</label>
-        <input id="modal-kilometers" @bind="@Vehicle.Kilometers" placeholder="10500" />
+            <label for="modal-fueltype">@Localizer[nameof(Dictionary.FuelType)]</label>
+            <InputSelect id="modal-fueltype" @bind-Value="@Vehicle.FuelType">
+                @foreach (var fuelType in Enum.GetValues(typeof(VehicleFuelType)))
+                {
+                    <option value="@fuelType">@fuelType</option>
+                }
+            </InputSelect>
 
-        <label for="modal-fueltype">@Localizer[nameof(Dictionary.FuelType)]</label>
-        <InputSelect id="modal-fueltype" @bind-Value="@Vehicle.FuelType">
-            @foreach (var fuelType in Enum.GetValues(typeof(VehicleFuelType)))
+            <label for="modal-vehiclemodel">@Localizer[nameof(Dictionary.Model)]</label>
+            <InputSelect id="modal-vehiclemodel" @bind-Value="@Vehicle.VehicleModelId">
+                @foreach (var vehicleModel in _vehicleModels)
+                {
+                    <option value="@vehicleModel.Id">@vehicleModel.Brand @vehicleModel.Name</option>
+                }
+            </InputSelect>
+
+            <button class="btn-primary" @onclick="@OnUpdate">@Localizer[nameof(Dictionary.Update)]</button>
+
+        </div>
+        <div class="d-flex flex-column w-100">
+            <h2>@Localizer[nameof(Dictionary.Maintenances)]</h2>
+            <button class="btn-primary w-25" @onclick="@OpenAddPopup">@Localizer[nameof(Dictionary.Add)]</button>
+
+            @foreach (var maintenance in Vehicle.Maintenances)
             {
-                <option value="@fuelType">@fuelType</option>
+                <div class="d-flex flex-row align-items-center">
+                    <p>@maintenance.Kilometers km - @maintenance.Date.ToString("dd/MM/yyyy")</p>
+                    <p class="px-5">|</p>
+                    <p class="text-wrap">@maintenance.Description</p>
+                </div>
             }
-        </InputSelect>
+        </div>
+    </div>
 
-        <label for="modal-vehiclemodel">@Localizer[nameof(Dictionary.Model)]</label>
-        <InputSelect id="modal-vehiclemodel" @bind-Value="@Vehicle.VehicleModelId">
-            @foreach (var vehicleModel in _vehicleModels)
-            {
-                <option value="@vehicleModel.Id">@vehicleModel.Brand @vehicleModel.Name</option>
-            }
-        </InputSelect>
-
-        <button class="btn-primary" @onclick="@OnUpdate">@Localizer[nameof(Dictionary.Update)]</button>
-
+    <div class="modal fade show " id="myModal" style=" display: @(_modalMode==ModalMode.Closed? "none":"block");">
+        <div class="modal-dialog bg-light" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex flex-column">
+                    @if (_modalMode == ModalMode.Add)
+                    {
+                        <h3>@Localizer[nameof(Dictionary.CreateNew)] @Localizer[nameof(Dictionary.Maintenance)]</h3>
+                        <div class="modal-body d-flex flex-column">
+                            <label for="modal-description">@Localizer[nameof(Dictionary.Name)]</label>
+                            <textarea id="modal-description" @bind="@modalVehicleMaintenance.Description" placeholder="Description" />
+                        </div>
+                    }
+                </div>
+                    
+                <div class="modal-footer">
+                    <button class="btn-primary" @onclick="@OnSave">@Localizer[nameof(Dictionary.Save)]</button>
+                    <button class="btn-primary" @onclick="@OnCancel">@Localizer[nameof(Dictionary.Cancel)]</button>
+                </div>
+            </div>
+        </div>
     </div>
 }
 
@@ -58,6 +96,16 @@ else
 
     private VehicleApiModel? Vehicle;
     private IList<VehicleModelApiModel>? _vehicleModels;
+
+    public VehicleMaintenanceCreateApiModel modalVehicleMaintenance { get; set; } = new VehicleMaintenanceCreateApiModel();
+
+    private enum ModalMode
+    {
+        Add,
+        Closed
+    }
+
+    private ModalMode _modalMode=ModalMode.Closed;
 
     protected  override async Task OnInitializedAsync()
     {
@@ -82,5 +130,45 @@ else
             await JSRuntime.InvokeVoidAsync("alert", httpStatus.ReasonPhrase);
         }
         NavigationManager.NavigateTo("/vehicles");
+    }
+
+    private async Task OpenAddPopup()
+    {
+        modalVehicleMaintenance = new VehicleMaintenanceCreateApiModel();
+        _modalMode = ModalMode.Add;
+    }
+
+    private async Task OnCancel()
+    {
+        _modalMode = ModalMode.Closed;
+    }
+
+    private async Task OnSave()
+    {
+        switch (_modalMode)
+        {
+            case ModalMode.Add:
+                await OnAdd();
+                break;
+        }
+    }
+
+    private async Task OnAdd()
+    {
+        var newVehicleMaintenance = new
+        {
+            VehicleId = Vehicle.Id,
+            Description = modalVehicleMaintenance.Description
+        };
+        JsonContent content = JsonContent.Create(newVehicleMaintenance);
+        var httpStatus = await HttpClient.PostAsync($"api/VehicleMaintenance", content);
+        if (!httpStatus.IsSuccessStatusCode)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", httpStatus.ReasonPhrase);
+        }
+
+        _modalMode = ModalMode.Closed;
+
+        Vehicle = await HttpClient.GetFromJsonAsync<VehicleApiModel>($"api/Vehicle/{VehicleId}");
     }
 }

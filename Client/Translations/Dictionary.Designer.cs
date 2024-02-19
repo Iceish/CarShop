@@ -196,11 +196,29 @@ namespace Client.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maintenance.
+        /// </summary>
+        public static string Maintenance {
+            get {
+                return ResourceManager.GetString("Maintenance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maintenance Frequency.
         /// </summary>
         public static string MaintenanceFrequency {
             get {
                 return ResourceManager.GetString("MaintenanceFrequency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maintenances.
+        /// </summary>
+        public static string Maintenances {
+            get {
+                return ResourceManager.GetString("Maintenances", resourceCulture);
             }
         }
         
@@ -273,6 +291,15 @@ namespace Client.Translations {
         public static string Vehicle {
             get {
                 return ResourceManager.GetString("Vehicle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vehicle details.
+        /// </summary>
+        public static string VehicleDetails {
+            get {
+                return ResourceManager.GetString("VehicleDetails", resourceCulture);
             }
         }
         

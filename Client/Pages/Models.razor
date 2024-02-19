@@ -46,36 +46,36 @@ else
 
     </table>
 
-        <div class="modal fade show " id="myModal" style=" display: @(_modalMode==ModalMode.Closed? "none":"block");">
-            <div class="modal-dialog bg-light" role="document">
-                <div class="modal-content">
-                    <div class="modal-header d-flex flex-column">
-                        @if (_modalMode == ModalMode.Add)
-                        {
-                            <h3>@Localizer[nameof(Dictionary.CreateNew)] @Localizer[nameof(Dictionary.Model)]</h3>
-                            <div class="modal-body d-flex flex-column">
-                                <label for="modal-name">@Localizer[nameof(Dictionary.Name)]</label>
-                                <input id="modal-name" @bind="@modalVehicleModel.Name" placeholder="Auris"/>
-                                <label for="modal-brand">@Localizer[nameof(Dictionary.Brand)]</label>
-                                <InputSelect id="modal-brand" @bind-Value="@modalVehicleModel.Brand">
-                                    @foreach (var brand in Enum.GetValues(typeof(VehicleBrand)))
-									{
-										<option value="@brand">@brand</option>
-									}
-                                </InputSelect>
-                                <label for="modal-maintenancefrequency">@Localizer[nameof(Dictionary.MaintenanceFrequency)]</label
-                                <input id="modal-maintenancefrequency" @bind="@modalVehicleModel.MaintenanceFrequency" placeholder="0" />
-                            </div>
-                        }
-                    </div>
+    <div class="modal fade show " id="myModal" style=" display: @(_modalMode==ModalMode.Closed? "none":"block");">
+        <div class="modal-dialog bg-light" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex flex-column">
+                    @if (_modalMode == ModalMode.Add)
+                    {
+                        <h3>@Localizer[nameof(Dictionary.CreateNew)] @Localizer[nameof(Dictionary.Model)]</h3>
+                        <div class="modal-body d-flex flex-column">
+                            <label for="modal-name">@Localizer[nameof(Dictionary.Name)]</label>
+                            <input id="modal-name" @bind="@modalVehicleModel.Name" placeholder="Auris"/>
+                            <label for="modal-brand">@Localizer[nameof(Dictionary.Brand)]</label>
+                            <InputSelect id="modal-brand" @bind-Value="@modalVehicleModel.Brand">
+                                @foreach (var brand in Enum.GetValues(typeof(VehicleBrand)))
+								{
+									<option value="@brand">@brand</option>
+								}
+                            </InputSelect>
+                            <label for="modal-maintenancefrequency">@Localizer[nameof(Dictionary.MaintenanceFrequency)]</label
+                            <input id="modal-maintenancefrequency" @bind="@modalVehicleModel.MaintenanceFrequency" placeholder="0" />
+                        </div>
+                    }
+                </div>
                     
-                    <div class="modal-footer">
-                        <button class="btn-primary" @onclick="@OnSave">@Localizer[nameof(Dictionary.Save)]</button>
-                        <button class="btn-primary" @onclick="@OnCancel">@Localizer[nameof(Dictionary.Cancel)]</button>
-                    </div>
+                <div class="modal-footer">
+                    <button class="btn-primary" @onclick="@OnSave">@Localizer[nameof(Dictionary.Save)]</button>
+                    <button class="btn-primary" @onclick="@OnCancel">@Localizer[nameof(Dictionary.Cancel)]</button>
                 </div>
             </div>
         </div>
+    </div>
 }
 
 @code {
@@ -97,7 +97,6 @@ else
     protected  override async Task OnInitializedAsync()
     {
         _models = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/VehicleModel");
-
     }
 
     private async Task OpenAddPopup()

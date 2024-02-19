@@ -142,6 +142,15 @@ namespace Client.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Go back.
+        /// </summary>
+        public static string GoBack {
+            get {
+                return ResourceManager.GetString("GoBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
         public static string Home {

@@ -18,6 +18,13 @@
 }
 else
 {
+    <a class="text-primary fw-bold text-decoration-none" href='javascript:history.go(-1)'>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-90deg-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1.146 4.854a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H12.5A2.5 2.5 0 0 1 15 6.5v8a.5.5 0 0 1-1 0v-8A1.5 1.5 0 0 0 12.5 5H2.707l3.147 3.146a.5.5 0 1 1-.708.708z" />
+        </svg>
+        @Localizer[nameof(Dictionary.GoBack)]..
+    </a>
+
     <h1>@Localizer[nameof(Dictionary.VehicleDetails)] - @Vehicle.Immatriculation</h1>
     
     <div class="d-flex flex-row w-100 gap-5">
@@ -55,14 +62,18 @@ else
             <h2>@Localizer[nameof(Dictionary.Maintenances)]</h2>
             <button class="btn-primary w-25" @onclick="@OpenAddPopup">@Localizer[nameof(Dictionary.Add)]</button>
 
-            @foreach (var maintenance in Vehicle.Maintenances)
-            {
-                <div class="d-flex flex-row align-items-center">
-                    <p>@maintenance.Kilometers km - @maintenance.Date.ToString("dd/MM/yyyy")</p>
-                    <p class="px-5">|</p>
-                    <p class="text-wrap">@maintenance.Description</p>
-                </div>
-            }
+            <div class="p-3">
+                @foreach (var maintenance in Vehicle.Maintenances)
+                {
+                    <div class="d-flex flex-row align-items-start">
+                        <p>@maintenance.Kilometers km - @maintenance.Date.ToString("dd/MM/yyyy")</p>
+                        <p class="px-5">|</p>
+                        <pre>@maintenance.Description</pre>
+                    </div>
+                    <hr />
+                }
+            </div>
+            
         </div>
     </div>
 

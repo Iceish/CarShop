@@ -144,6 +144,9 @@
   <data name="FuelType" xml:space="preserve">
     <value>Type de carburant</value>
   </data>
+  <data name="GoBack" xml:space="preserve">
+    <value>Retourner en arrière</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Accueil</value>
   </data>

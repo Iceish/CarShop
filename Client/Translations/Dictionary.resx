@@ -144,6 +144,9 @@
   <data name="FuelType" xml:space="preserve">
     <value>Fuel type</value>
   </data>
+  <data name="GoBack" xml:space="preserve">
+    <value>Go back</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Home</value>
   </data>

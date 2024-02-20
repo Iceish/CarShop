@@ -1,5 +1,4 @@
-﻿@page "/vehicles/details/{VehicleId:int}"
-@using Shared.ApiModels
+﻿@using Shared.ApiModels
 @using Shared.Enums
 @using Microsoft.Extensions.Localization
 @using Client.Translations
@@ -7,6 +6,7 @@
 @inject IJSRuntime JSRuntime
 @inject IStringLocalizer<Dictionary> Localizer
 @inject NavigationManager NavigationManager
+@page "/vehicles/details/{VehicleId:int}"
 
 <PageTitle>@Localizer[nameof(Dictionary.Vehicle)]</PageTitle>
 
@@ -124,25 +124,6 @@ else
         _vehicleModels = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/VehicleModel");
     }
 
-    private async Task OnUpdate()
-    {
-        var newVehicle = new
-        {
-            immatriculation = Vehicle.Immatriculation,
-            year = Vehicle.Year,
-            kilometers = Vehicle.Kilometers,
-            fuelType = Vehicle.FuelType,
-            vehicleModelId = Vehicle.VehicleModelId
-        };
-        JsonContent content = JsonContent.Create(newVehicle);
-        var httpStatus = await HttpClient.PutAsync($"api/Vehicle/{Vehicle.Id}", content);
-        if (!httpStatus.IsSuccessStatusCode)
-        {
-            await JSRuntime.InvokeVoidAsync("alert", httpStatus.ReasonPhrase);
-        }
-        NavigationManager.NavigateTo("/vehicles");
-    }
-
     private async Task OpenAddPopup()
     {
         modalVehicleMaintenance = new VehicleMaintenanceCreateApiModel();
@@ -181,5 +162,24 @@ else
         _modalMode = ModalMode.Closed;
 
         Vehicle = await HttpClient.GetFromJsonAsync<VehicleApiModel>($"api/Vehicle/{VehicleId}");
+    }
+
+    private async Task OnUpdate()
+    {
+        var newVehicle = new
+        {
+            immatriculation = Vehicle.Immatriculation,
+            year = Vehicle.Year,
+            kilometers = Vehicle.Kilometers,
+            fuelType = Vehicle.FuelType,
+            vehicleModelId = Vehicle.VehicleModelId
+        };
+        JsonContent content = JsonContent.Create(newVehicle);
+        var httpStatus = await HttpClient.PutAsync($"api/Vehicle/{Vehicle.Id}", content);
+        if (!httpStatus.IsSuccessStatusCode)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", httpStatus.ReasonPhrase);
+        }
+        NavigationManager.NavigateTo("/vehicles");
     }
 }

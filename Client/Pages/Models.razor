@@ -1,11 +1,11 @@
-﻿@page "/models"
-@using Shared.ApiModels
+﻿@using Shared.ApiModels
 @using Shared.Enums
 @using Microsoft.Extensions.Localization
 @using Client.Translations
 @inject HttpClient HttpClient
 @inject IJSRuntime JSRuntime
 @inject IStringLocalizer<Dictionary> Localizer
+@page "/models"
 
 <PageTitle>@Localizer[nameof(Dictionary.Model)]</PageTitle>
 
@@ -19,7 +19,8 @@
 else
 {
     <button class="btn btn-primary"
-                @onclick="@(OpenAddPopup)">@Localizer[nameof(Dictionary.Add)]</button>
+                @onclick="@(OpenAddPopup)">@Localizer[nameof(Dictionary.Add)]
+    </button>
     <table class="table">
         <thead>
         <tr>
@@ -38,7 +39,8 @@ else
                 <td>@model.MaintenanceFrequency km</td>
                 <td>
                     <button class="btn btn-danger" 
-                            @onclick="@(()=>OnDelete(model))">@Localizer[nameof(Dictionary.Delete)]</button>
+                            @onclick="@(()=>OnDelete(model))">@Localizer[nameof(Dictionary.Delete)]
+                    </button>
                 </td>
             </tr>
         }
@@ -88,39 +90,14 @@ else
 
     private ModalMode _modalMode=ModalMode.Closed;
 
-    private VehicleModelApiModel? _selectedModel;
-
     public VehicleModelCreateApiModel modalVehicleModel { get; set; } = new VehicleModelCreateApiModel();
 
     private IList<VehicleModelApiModel>? _models;
-
-    protected  override async Task OnInitializedAsync()
-    {
-        _models = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/VehicleModel");
-
-    }
 
     private async Task OpenAddPopup()
     {
         modalVehicleModel = new VehicleModelCreateApiModel();
         _modalMode = ModalMode.Add;
-    }
-
-    private async Task OnDelete(VehicleModelApiModel model)
-    {
-        var popupResult = await JSRuntime.InvokeAsync<bool>
-            ("confirm", $"{Localizer.GetString("DeleteConfirmation")} {model.Name} ?");
-
-        if (popupResult == true)
-        {
-            var httpStatus = await HttpClient.DeleteAsync($"api/VehicleModel/{model.Id}");
-            if (!httpStatus.IsSuccessStatusCode)
-            {
-                await JSRuntime.InvokeVoidAsync("alert", httpStatus.ReasonPhrase);
-            }
-        }
-
-        _models = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/VehicleModel");
     }
 
     private async Task OnCancel()
@@ -136,6 +113,11 @@ else
                 await OnAdd();
                 break;
         }
+    }
+
+    protected  override async Task OnInitializedAsync()
+    {
+        _models = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/VehicleModel");
     }
 
     private async Task OnAdd()
@@ -158,4 +140,20 @@ else
         _models = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/VehicleModel");
     }
 
+    private async Task OnDelete(VehicleModelApiModel model)
+    {
+        var popupResult = await JSRuntime.InvokeAsync<bool>
+            ("confirm", $"{Localizer.GetString("DeleteConfirmation")} {model.Name} ?");
+
+        if (popupResult == true)
+        {
+            var httpStatus = await HttpClient.DeleteAsync($"api/VehicleModel/{model.Id}");
+            if (!httpStatus.IsSuccessStatusCode)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", httpStatus.ReasonPhrase);
+            }
+        }
+
+        _models = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/VehicleModel");
+    }
 }

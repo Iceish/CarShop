@@ -6,6 +6,9 @@ public class VehicleMaintenanceDomainService
 {
     public ValidationException? Validate(VehicleMaintenance vehicleMaintenance)
     {
+        if (vehicleMaintenance == null)
+            return new ValidationException("Vehicle maintenance is required.");
+
         if (vehicleMaintenance.Kilometers < 0)
             return new ValidationException("Kilometers must be greater than or equal to 0.");
 

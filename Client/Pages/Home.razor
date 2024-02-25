@@ -18,28 +18,35 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>@Localizer[nameof(Dictionary.Brand)]</th>
-                <th>@Localizer[nameof(Dictionary.Model)]</th>
-                <th>@Localizer[nameof(Dictionary.Registration)]</th>
-                <th>@Localizer[nameof(Dictionary.Late)]</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var vehicle in _vehicles)
-            {
+    @if (_vehicles.Count == 0)
+	{
+        <p><em>@Localizer[nameof(Dictionary.NoLateVehicles)]</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@vehicle.VehicleModel.Brand</td>
-                    <td>@vehicle.VehicleModel.Name</td>
-                    <td><a href="/vehicles/details/@vehicle.Id">@vehicle.Immatriculation</a></td>
-                    <td>@vehicle.NextMaintenanceDelta km</td>
+                    <th>@Localizer[nameof(Dictionary.Brand)]</th>
+                    <th>@Localizer[nameof(Dictionary.Model)]</th>
+                    <th>@Localizer[nameof(Dictionary.Registration)]</th>
+                    <th>@Localizer[nameof(Dictionary.Late)]</th>
                 </tr>
-            }
-        </tbody>
+            </thead>
+            <tbody>
+                @foreach (var vehicle in _vehicles)
+                {
+                    <tr>
+                        <td>@vehicle.VehicleModel.Brand</td>
+                        <td>@vehicle.VehicleModel.Name</td>
+                        <td><a href="/vehicles/details/@vehicle.Id">@vehicle.Immatriculation</a></td>
+                        <td>@vehicle.NextMaintenanceDelta km</td>
+                    </tr>
+                }
+            </tbody>
 
-    </table>
+        </table>
+    }
 }
 
 @code {
@@ -48,7 +55,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _vehicles = await HttpClient.GetFromJsonAsync<IList<VehicleApiModel>>("api/Vehicle/Late");
+        try
+        {
+            _vehicles = await HttpClient.GetFromJsonAsync<IList<VehicleApiModel>>("api/Vehicle/Late");
+        }catch
+        {
+            _vehicles = new List<VehicleApiModel>();
+        }
     }
-
 }

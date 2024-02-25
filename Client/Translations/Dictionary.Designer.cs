@@ -259,6 +259,24 @@ namespace Client.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is no data here for now.
+        /// </summary>
+        public static string NoData {
+            get {
+                return ResourceManager.GetString("NoData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All vehicles are well maintained.
+        /// </summary>
+        public static string NoLateVehicles {
+            get {
+                return ResourceManager.GetString("NoLateVehicles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Recipes.
         /// </summary>
         public static string Recipes {

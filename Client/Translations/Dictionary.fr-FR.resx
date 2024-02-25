@@ -183,6 +183,12 @@
   <data name="Name" xml:space="preserve">
     <value>Nom</value>
   </data>
+  <data name="NoData" xml:space="preserve">
+    <value>Il n'y a pas de donnée ici pour le moment</value>
+  </data>
+  <data name="NoLateVehicles" xml:space="preserve">
+    <value>Tout les véhicules sont à jour</value>
+  </data>
   <data name="Recipes" xml:space="preserve">
     <value>Recettes</value>
   </data>

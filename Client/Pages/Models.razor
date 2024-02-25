@@ -21,32 +21,6 @@ else
     <button class="btn btn-primary"
                 @onclick="@(OpenAddPopup)">@Localizer[nameof(Dictionary.Add)]
     </button>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>@Localizer[nameof(Dictionary.Brand)]</th>
-            <th>@Localizer[nameof(Dictionary.Model)]</th>
-            <th>@Localizer[nameof(Dictionary.MaintenanceFrequency)]</th>
-            <th>@Localizer[nameof(Dictionary.Actions)]</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var model in _models)
-        {
-            <tr>
-                <td>@model.Brand</td>
-                <td>@model.Name</td>
-                <td>@model.MaintenanceFrequency km</td>
-                <td>
-                    <button class="btn btn-danger" 
-                            @onclick="@(()=>OnDelete(model))">@Localizer[nameof(Dictionary.Delete)]
-                    </button>
-                </td>
-            </tr>
-        }
-        </tbody>
-
-    </table>
 
     <div class="modal fade show " id="myModal" style=" display: @(_modalMode==ModalMode.Closed? "none":"block");">
         <div class="modal-dialog bg-light" role="document">
@@ -78,6 +52,41 @@ else
             </div>
         </div>
     </div>
+
+    @if (_models.Count == 0)
+	{
+        <p><em>@Localizer[nameof(Dictionary.NoData)]</em></p>
+    }
+    else
+    {
+        <table class="table">
+        <thead>
+        <tr>
+            <th>@Localizer[nameof(Dictionary.Brand)]</th>
+            <th>@Localizer[nameof(Dictionary.Model)]</th>
+            <th>@Localizer[nameof(Dictionary.MaintenanceFrequency)]</th>
+            <th>@Localizer[nameof(Dictionary.Actions)]</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var model in _models)
+        {
+            <tr>
+                <td>@model.Brand</td>
+                <td>@model.Name</td>
+                <td>@model.MaintenanceFrequency km</td>
+                <td>
+                    <button class="btn btn-danger" 
+                            @onclick="@(()=>OnDelete(model))">@Localizer[nameof(Dictionary.Delete)]
+                    </button>
+                </td>
+            </tr>
+        }
+        </tbody>
+
+    </table>
+    }
+    
 }
 
 @code {
@@ -117,7 +126,14 @@ else
 
     protected  override async Task OnInitializedAsync()
     {
-        _models = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/VehicleModel");
+        try
+        {
+            _models = await HttpClient.GetFromJsonAsync<IList<VehicleModelApiModel>>("api/VehicleModel");
+            
+        } catch
+		{
+			_models = new List<VehicleModelApiModel>();
+		}
     }
 
     private async Task OnAdd()
